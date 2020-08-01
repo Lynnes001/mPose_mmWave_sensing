@@ -1,4 +1,4 @@
-# mPose_mmWave_sensing
+# mPose mmWave Radar Sensing
 
 On its way...
 
