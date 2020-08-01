@@ -5,33 +5,33 @@ Created on Tue May 26 00:11:18 2020
 @author: Song
 """
 
-#%% Extract heatmaps from ADC data
+#%% Step 1. Extract heatmaps from ADC data
 
-# envFolder = "data_0704_song_lab_1_stationary"
-envFolder = "data_0604_song_lab"
+envFolder = "..//data//"
 
-from utility import featureExtraction, featureExtractionDoppler
+from utility import featureExtraction
 import numpy as np
-import glob
+import glob, os
 
-data_folders = glob.glob(".//"+envFolder+"//data_raw//*")
 
+if not os.path.isdir(envFolder+'data_features//'):
+    os.mkdir(envFolder+'data_features//');
+
+data_folders = glob.glob(envFolder+"data_raw//*")
 for i, folder in enumerate(data_folders):
-    # if 'random' not in folder:
     if i > -1:
         filename = folder.split('/')[5]
         folder = folder+'//'
-        print(filename, ' ', str(i+1)+'//'+str(len(data_folders)))
-        [heatmaps, timestampList, rangeReso] = featureExtraction(folder, folder.split('//')[1]+'//data_features//'+filename, i)
-        # [heatmaps, timestampList, rangeReso] = featureExtractionDoppler(folder, folder.split('//')[1]+'//data_features//'+filename, i)
-        
-    # break
+        print(filename, ' ', str(i+1)+'/'+str(len(data_folders)))
+        [heatmaps, timestampList, rangeReso] = featureExtraction(folder, envFolder+'data_features//'+filename, i)
+
     
-#%% Load heatmaps and 3d skeletons
-import glob
+#%% Step 2: Sync heatmaps and 3d skeletons
+
+import glob, os
 import numpy as np
 import re, time
-import pdb 
+import pdb
 from utility import centeringSkeletonLoop
 
 # envFolder = "data_0604_song_lab"
@@ -39,6 +39,10 @@ from utility import centeringSkeletonLoop
 skeletonFolders = glob.glob(".//"+envFolder+"//data_raw//*")
 radarFeatureFolder = ".//"+envFolder+"//data_features//";
 writeFolder = ".//"+envFolder+"//data_train//"
+
+
+if not os.path.isdir(writeFolder):
+    os.mkdir(writeFolder);
 
 for k, skeletonFile in enumerate(skeletonFolders):
     

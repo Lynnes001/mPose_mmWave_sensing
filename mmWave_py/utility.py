@@ -6,27 +6,13 @@ Created on Wed May 13 21:00:00 2020
 """
 
 
-#%% Read Json Output
+# Read Json Output
 import json, csv, datetime, os
 import numpy as np
 from dateutil import parser
 import matplotlib.pyplot as plt
+import pdb
 
-def readOpenPoseJson(filename):
-    with open(filename) as f:
-      data = json.load(f)
-    
-    # Output: {'name': 'Bob', 'languages': ['English', 'Fench']}
-    
-    coordingates = data['people'][0]['pose_keypoints_2d']
-    coordingates = np.array(coordingates).reshape((3,-1), order = 'F')
-    
-    coordingates[0,:] = normalize(coordingates[0,:])
-    coordingates[1,:] = normalize(coordingates[1,:])
-    coordingates[2,:] = normalize(coordingates[2,:])
-    # print(coordingates.shape)
-
-    return coordingates
 
 
 import numpy as np
@@ -34,17 +20,6 @@ from mmwave.dataloader import DCA1000
 import mmwave.dsp as dsp
 # from mmwave.dsp import range_resolution
 from mmwave.dsp.utils import Window
-
-def extractKeppoints(dataname, folder, n_frame, optPath = ''):
-    opt = np.zeros((n_frame, 3, 25))
-    for i in range(n_frame):
-        filename = dataname+'_'+str(i).zfill(12)+'_keypoints'
-        coordingates = readOpenPoseJson(folder+filename+'.json')
-        opt[i,:,:] = coordingates
-        
-    if optPath != '':
-        np.save(optPath,opt)
-    return opt
 
 
 def normalize(X):
@@ -367,14 +342,6 @@ def featureExtraction(folder, optPath, figid):
             # range_azimuth2[:,j], beamWeights_azimuth2[:,j] = dsp.aoa_capon( radar_cube[:, 4:7 ,j].T, steering_vec_3va, magnitude=True)
             # range_elevation[:,j], beamWeights_elevation[:,j] = dsp.aoa_capon( radar_cube[:, [2,6,3,7], j].T, steering_vec_4va, magnitude=True)
             
-        # normalize
-        
-        # print('BEFORE \n mean: ', np.mean(range_azimuth), np.mean(range_azimuth2), np.mean(range_elevation) )
-        # print('std: ', np.std(range_azimuth), np.std(range_azimuth2), np.std(range_elevation) )
-        
-        # range_azimuth = normalize(range_azimuth)
-        # range_azimuth2 = normalize(range_azimuth2)
-        # range_elevation = normalize(range_elevation)
         
         # print('AFTER \nmean: ', np.mean(range_azimuth), np.mean(range_azimuth2), np.mean(range_elevation) )
         # print('std: ', np.std(range_azimuth), np.std(range_azimuth2), np.std(range_elevation) )
@@ -385,17 +352,12 @@ def featureExtraction(folder, optPath, figid):
         # range_azimuth2 = minmax_scale(range_azimuth2, axis = 1, copy = False)
         # range_elevation = minmax_scale(range_elevation, axis = 1, copy = False)
         
-        
+        # normalize
+
         prescale_factor = 10000000
         range_azimuth = scale(range_azimuth/prescale_factor, axis = 1)
         range_azimuth2 = scale(range_azimuth2/prescale_factor, axis = 1) 
         range_elevation = scale(range_elevation/prescale_factor, axis = 1) 
-        
-
-
-            
-            # print(np.min(range_azimuth), np.min(range_azimuth2), np.min(range_elevation) )
-            # print(np.max(range_azimuth), np.max(range_azimuth2), np.max(range_elevation) )
             
         # if i == 22:
         #     break
@@ -432,166 +394,17 @@ def featureExtraction(folder, optPath, figid):
     heatmaps=heatmaps.astype('float32')
     
     if np.isnan(heatmaps).sum() + np.isinf(heatmaps).sum() > 0:
-        print(heatmaps.dtype, ', has NAN or INF error')
+        print('dtype: '+heatmaps.dtype, ', has NAN or INF error')
     else:
-        print(heatmaps.dtype)
+        print('dtype: '+heatmaps.dtype)
+
 
     if optPath != '':
-        if not os.path.isdir(optPath + '//'):
-            os.mkdir(optPath + '//')
+        # if not os.path.isdir(optPath + '//'):
+        #     os.mkdir(optPath + '//')
         np.savez(optPath+'.npz', heatmaps=heatmaps, timestampList=timestampList)
         
     return heatmaps, np.array(timestampList), reso
-
-
-
-
-
-def featureExtractionDoppler(folder, optPath, figid):
-    """
-    Return opt: numFrame, 3 (heatmaps), 46*46(angle bin), nLoopsPerFrame 
-    
-    """
-    
-    startTime = ''
-    with open(folder+'adc_data_Raw_LogFile.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in csv_reader:
-            if 'Capture start time' in str(row):
-                startTimeRow = row
-                break
-    startTimeStr = startTimeRow[0].split(' - ')[1];
-    timestamp = datetime.datetime.timestamp(parser.parse(startTimeStr))
-    timestampList = []
-
-    filename = folder + 'adc_data.bin';
-    
-    numFrames = 640
-    numADCSamples = 512
-    numTxAntennas = 2
-    numRxAntennas = 4
-    numLoopsPerFrame = 76
-    numChirpsPerFrame = numTxAntennas * numLoopsPerFrame
-    
-    BINS_PROCESSED = 55
-    ANGLE_RES = 1
-    ANGLE_RANGE = 70
-    ANGLE_BINS = (ANGLE_RANGE * 2) // ANGLE_RES + 1
-    
-    reso = dsp.range_resolution(numADCSamples, dig_out_sample_rate=6000, freq_slope_const=39.010)
-    reso = round(reso[0], 4)
-    
-    # adc_data = np.fromfile(filename)
-    adc_data = np.fromfile(filename, dtype=np.uint16)
-
-    # (1) Load Data
-    if adc_data.shape[0]<398458880:
-        padSize = 398458880 - adc_data.shape[0];
-        print("padded size: ", padSize)
-        adc_data = np.pad(adc_data, padSize)[padSize:]
-        
-    # print(adc_data.shape)
-    adc_data = adc_data.reshape(numFrames, -1)
-    adc_data = np.apply_along_axis(DCA1000.organize, 1, adc_data, num_chirps=numChirpsPerFrame,
-                       num_rx=numRxAntennas, num_samples=numADCSamples)
-    
-    # heatmaps = np.zeros((adc_data.shape[0], 3, ANGLE_BINS, BINS_PROCESSED), dtype = 'float32')
-    heatmaps = np.zeros((adc_data.shape[0], 3, ANGLE_BINS, ANGLE_BINS), dtype = 'float32')
-    
-    numVirAntHori = 3
-    numVirAntVer = 4
-    
-    # (2) Start DSP processing
-    
-    # (3) Process each frame
-    for i, frame in enumerate(adc_data):
-        timestamp+=0.033
-        timestampList.append(timestamp)
-        # print(frame.shape)
-
-        range_azimuth = np.zeros((ANGLE_BINS, BINS_PROCESSED))
-        range_azimuth2 = np.zeros((ANGLE_BINS, BINS_PROCESSED))
-        range_elevation = np.zeros((ANGLE_BINS, BINS_PROCESSED))
-        
-        
-    
-        # Range Processing
-        # radar_cube = dsp.range_processing(frame, window_type_1d=Window.BLACKMAN)
-        radar_cube = dsp.range_processing(frame)
-        # radar_cube = dsp.range_processing(frame, window_type_1d=Window.HANNING)
-    
-        """ (Capon Beamformer) """
-        # --- static clutter removal / normalize
-        # radar_cube = normalize(radar_cube.astype("float32"))
-        mean = radar_cube.mean(0)
-        radar_cube = radar_cube - mean
-        
-
-        zeroDoppler, detMat = dsp.doppler_processing(radar_cube,
-                                                   num_tx_antennas=2,
-                                                   clutter_removal_enabled=True,
-                                                   interleaved=True,
-                                                   window_type_2d=Window.HANNING,
-                                                   accumulate=True)
-
-
-        doppler_azimuth = scale(np.fft.fftshift(zeroDoppler[10:55,:]), axis = 1)
-
-        if 11< i <=21:
-
-            fig = plt.figure(figsize=(3,3),frameon=False)
-            plt.imshow(doppler_azimuth)
-            # plt.clim([0, 1008976695404])
-            plt.title('Posture '+str(figid)+', doppler Heatmap '+str(i))
-            plt.savefig('./intermediate/doppler/fig'+str(figid)+'_'+str(i))
-
-            plt.show()
-            plt.close()
-        # plt.imshow(doppler_azimuth)
-        
-        
-        # plt.show()
-        
-        # --- capon beamforming  doppler_processing
-        beamWeights_azimuth = np.zeros((numVirAntHori, BINS_PROCESSED), dtype=np.complex_)
-        # beamWeights_azimuth2 = np.zeros((numVirAntHori, BINS_PROCESSED), dtype=np.complex_)
-        # beamWeights_elevation = np.zeros((numVirAntVer, BINS_PROCESSED), dtype=np.complex_)
-        
-        # Separate TX, rx 1234, vrx1234
-        # radar_cube = np.concatenate((radar_cube[0::2, ...], radar_cube[1::2, ...]), axis=1)
-        # Note that when replacing with generic doppler estimation functions, radarCube is interleaved and
-        # has doppler at the last dimension.
-        # Range bin processed
-        # for j in range(10,BINS_PROCESSED):
-            
-        #     range_azimuth[:,j], beamWeights_azimuth[:,j] = dsp.aoa_capon( radar_cube[:, 1:4 , j].T, steering_vec_3va, magnitude=True)
-        #     range_azimuth2[:,j], beamWeights_azimuth2[:,j] = dsp.aoa_capon( radar_cube[:, 5:8 , j].T, steering_vec_3va, magnitude=True)
-        #     range_elevation[:,j], beamWeights_elevation[:,j] = dsp.aoa_capon( radar_cube[:, [0,4,1,5] , j].T,  steering_vec_4va, magnitude=True)
-
-        
-        # prescale_factor = 10000000
-        doppler_azimuth = scale(zeroDoppler[10:55,:], axis = 1)
-        # range_azimuth2 = scale(range_azimuth2/prescale_factor, axis = 1)
-        # range_elevation = scale(range_elevation/prescale_factor, axis = 1)
-        
-        # heatmaps[i,0,:,:] = resize(res[0], (numADCSamples, numADCSamples))
-
-    # opt
-    heatmaps=heatmaps.astype('float32')
-    
-    if np.isnan(heatmaps).sum() + np.isinf(heatmaps).sum() > 0:
-        print(heatmaps.dtype, ', has NAN or INF error')
-    else:
-        print(heatmaps.dtype)
-
-    if optPath != '':
-        if not os.path.isdir(optPath + '//'):
-            os.mkdir(optPath + '//')
-        np.savez(optPath+'.npz', heatmaps=heatmaps, timestampList=timestampList)
-        
-    return heatmaps, np.array(timestampList), reso
-
-
 
 
 def checkData(data, label, ts):
@@ -653,50 +466,6 @@ def centeringSkeletonLoop(skeletons):
         sample = centeringSkeleton(sample)
         
     return skeletons
-
-
-def checkDataTrainPhase(data, label):
-    data_check = np.isinf(data)
-    if np.sum(data_check):
-        errListData = np.argwhere(data_check==True)
-        errListUnqData = np.unique(errListData[:,0])
-        print('Bad data Error Data INF', errListUnqData )
-
-        data = np.delete(data, errListUnqData, axis = 0)
-        label = np.delete(label, errListUnqData, axis = 0)
-        
-    data_check = np.isnan(data)
-    if np.sum(data_check):
-        errListData = np.argwhere(data_check==True)
-        errListUnqData = np.unique(errListData[:,0])
-        print('Bad data Error Data NAN', errListUnqData )
-
-        data = np.delete(data, errListUnqData, axis = 0)
-        label = np.delete(label, errListUnqData, axis = 0)
-        
-    label_check = np.isinf(label)
-    if np.sum(label_check):
-        errListLabel = np.argwhere(label_check==True)
-        errListUnqLabel = np.unique(errListLabel[:,0])
-        print('Bad data Error Label INF', errListUnqLabel )
-
-        data = np.delete(data, errListUnqLabel, axis = 0)
-        label = np.delete(label, errListUnqLabel, axis = 0)
-        
-    label_check = np.isnan(label)
-    if np.sum(label_check):
-        errListLabel = np.argwhere(label_check==True)
-        errListUnqLabel = np.unique(errListLabel[:,0])
-        print('Bad data Error Label NAN', errListUnqLabel )
-
-        data = np.delete(data, errListUnqLabel, axis = 0)
-        label = np.delete(label, errListUnqLabel, axis = 0)
-    
-    return data, label
-
-
-
-
 
 
 def checkDataTrainPhase(data, label):

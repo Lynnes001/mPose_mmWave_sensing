@@ -8,7 +8,7 @@ The project includes the following parts.
 
 1. Radar signal processing starting from raw mmWave radar
 2. Frame sync between mmWave radar frames and Kinect skeleton frames
-3. Wheelss
+3. Wheels
 
 ## Prerequisite
 
