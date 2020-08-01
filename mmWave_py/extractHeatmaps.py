@@ -36,3 +36,6 @@ ts = heatmapsSet["timestampList"]
 
 plt.imshow(heatmaps[0])
 plt.show()
+
+
+# %%
