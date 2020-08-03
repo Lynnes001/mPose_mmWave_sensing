@@ -14,10 +14,10 @@ AWR1642EVM-ODS + DCA1000 data capture setup. Capture raw mmWave data (adc_data.b
     
     2. Data is being processed with the following steps.
        
-        - Load `.bin` files. Set hardcoded Radar config parameters (see below). The configure is from your settings in mmWave Studio. My config is in `./data/config/mPose0714.xml`.
+        - Load `.bin` files. Set hardcoded radar config parameters (see below). The configure is from your settings in mmWave Studio. My config is in `./data/config/mPose0714.xml`.
 
         ```
-        # line 250
+        # line 250 in utility.py
         numFrames = 640
         numADCSamples = 512
         numTxAntennas = 2
@@ -48,7 +48,7 @@ AWR1642EVM-ODS + DCA1000 data capture setup. Capture raw mmWave data (adc_data.b
 
 #### Q: Why there are 2 range-azimuth heatmaps but only 1 range-elevation heatmap?
 
-A: You may take a look at virtual antenna theory that TI provided ([MIMO Radar](https://www.ti.com/lit/pdf/swra554])). In AWR1642EVM-ODS, the virtual antenna shows below from [TI Obstacle Detection Reference Design](http://www.ti.com/lit/ug/tidue83/tidue83.pdf). 
+A: You may take a look at virtual antenna theory that TI provided ([MIMO Radar](https://www.ti.com/lit/pdf/swra554])). In AWR1642EVM-ODS, the virtual antenna shows in [TI Obstacle Detection Reference Design](http://www.ti.com/lit/ug/tidue83/tidue83.pdf). 
 
 ![img](virtualantenna.png)
 
