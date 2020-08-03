@@ -1,4 +1,4 @@
-# Extract Range-Elevation-Azimuth Heatmap from Raw mmWave Signals
+# Extract Spatial Heatmaps
 
 
 ## Prerequisite
@@ -15,6 +15,7 @@ AWR1642EVM-ODS + DCA1000 data capture setup. Capture raw mmWave data (adc_data.b
     2. Data is being processed with the following steps.
        
         - Load `.bin` files. Set hardcoded Radar config parameters (see below). The configure is from your settings in mmWave Studio. My config is in `./data/config/mPose0714.xml`.
+        
         ```
         # line 250
         numFrames = 640
