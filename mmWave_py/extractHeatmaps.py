@@ -19,7 +19,7 @@ for i, folder in enumerate(data_folders):
         filename = folder.split('/')[5]
         folder = folder+'//'
         print(filename, ' ', str(i+1)+'//'+str(len(data_folders)))
-        [heatmaps, timestampList, rangeReso] = featureExtraction(folder, envFolder+'data_features//'+filename, i)
+        [heatmaps, timestampList, rangeReso] = featureExtraction(folder, envFolder+'data_features//'+filename)
 
 # output heatmaps are saved to ..//data//data_features//
 

@@ -228,7 +228,7 @@ from sklearn.preprocessing import robust_scale, StandardScaler, scale, minmax_sc
 from skimage.transform import resize
 from mpl_toolkits.mplot3d import Axes3D # <--- This is important for 3d plotting 
 
-def featureExtraction(folder, optPath, figid):
+def featureExtraction(folder, optPath):
     """
     Return opt: numFrame, 3 (heatmaps), 46*46(angle bin), nLoopsPerFrame 
     
@@ -241,11 +241,11 @@ def featureExtraction(folder, optPath, figid):
             if 'Capture start time' in str(row):
                 startTimeRow = row
                 break
-    startTimeStr = startTimeRow[0].split(' - ')[1];
+    startTimeStr = startTimeRow[0].split(' - ')[1]
     timestamp = datetime.datetime.timestamp(parser.parse(startTimeStr))
     timestampList = []
 
-    filename = folder + 'adc_data.bin';
+    filename = folder + 'adc_data.bin'
     
     numFrames = 640
     numADCSamples = 512
