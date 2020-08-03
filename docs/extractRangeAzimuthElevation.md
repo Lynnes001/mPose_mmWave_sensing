@@ -3,7 +3,7 @@
 
 ## Prerequisite
 
-AWR1642EVM-ODS + DCA1000 data capture setup. Capture raw mmWave data (adc_data.bin) and save in `./data/data_raw/[posture]/`. You may debug first with My [data](https://drive.google.com/file/d/16AnJaEJpsRUfh3Qct37vUvPs4iKCM5G9/view?usp=sharing).
+AWR1642EVM-ODS + DCA1000 data capture setup. Capture raw mmWave data (adc_data.bin) and save in `./data/data_raw/[posture]/`. You may debug first with my [data](https://drive.google.com/file/d/16AnJaEJpsRUfh3Qct37vUvPs4iKCM5G9/view?usp=sharing).
 
 ## Run & Explanation
 
