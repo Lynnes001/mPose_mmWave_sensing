@@ -394,9 +394,9 @@ def featureExtraction(folder, optPath, figid):
     heatmaps=heatmaps.astype('float32')
     
     if np.isnan(heatmaps).sum() + np.isinf(heatmaps).sum() > 0:
-        print('dtype: '+heatmaps.dtype, ', has NAN or INF error')
+        print('dtype: ', heatmaps.dtype, ', has NAN or INF error')
     else:
-        print('dtype: '+heatmaps.dtype)
+        print('dtype: ', heatmaps.dtype)
 
 
     if optPath != '':

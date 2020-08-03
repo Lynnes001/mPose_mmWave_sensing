@@ -15,7 +15,7 @@ import glob, os
 
 
 if not os.path.isdir(envFolder+'data_features//'):
-    os.mkdir(envFolder+'data_features//');
+    os.mkdir(envFolder+'data_features//')
 
 data_folders = glob.glob(envFolder+"data_raw//*")
 for i, folder in enumerate(data_folders):
@@ -37,12 +37,12 @@ from utility import centeringSkeletonLoop
 # envFolder = "data_0604_song_lab"
 
 skeletonFolders = glob.glob(".//"+envFolder+"//data_raw//*")
-radarFeatureFolder = ".//"+envFolder+"//data_features//";
+radarFeatureFolder = ".//"+envFolder+"//data_features//"
 writeFolder = ".//"+envFolder+"//data_train//"
 
 
 if not os.path.isdir(writeFolder):
-    os.mkdir(writeFolder);
+    os.mkdir(writeFolder)
 
 for k, skeletonFile in enumerate(skeletonFolders):
     
@@ -52,8 +52,8 @@ for k, skeletonFile in enumerate(skeletonFolders):
     ts = []
     # data = np.ones([])
     
-    skeletonFile = glob.glob(skeletonFile+'//*.npz')[0];
-    filename = skeletonFile.split('/')[-1].split('.')[0];
+    skeletonFile = glob.glob(skeletonFile+'//*.npz')[0]
+    filename = skeletonFile.split('/')[-1].split('.')[0]
     heatmapFile = radarFeatureFolder+filename+'.npz'
 
     skeletonSet = np.load(skeletonFile)
@@ -67,12 +67,12 @@ for k, skeletonFile in enumerate(skeletonFolders):
     data_skeleton = centeringSkeletonLoop(skeletonSet['joints_captured'])
     # pdb.set_trace()
 
-    counter_s = 0;
+    counter_s = 0
 
     # Sync heatmap and skeleton
     
-    radarFrameEndTime = 0;
-    radarFrameEndIndex = 0;
+    radarFrameEndTime = 0
+    radarFrameEndIndex = 0
 
     for i, ts_s in enumerate(ts_skeleton):
         heatmap_list = []
@@ -95,7 +95,7 @@ for k, skeletonFile in enumerate(skeletonFolders):
                     label.append(data_skeleton[i])
                     ts.append(ts_s)
                     counter_s += 1
-                    radarFrameEndIndex = j+1;
+                    radarFrameEndIndex = j+1
                     # print(radarFrameEndIndex)
                     # print('===========')
                     # pdb.set_trace()
