@@ -23,6 +23,7 @@ The project includes the following parts.
 
 - [TI mmWave Studio v2.01](https://software-dl.ti.com/ra-processors/esd/MMWAVE-STUDIO/latest/index_FDS.html)
 - [TI mmWave SDK](https://www.ti.com/tool/MMWAVE-SDK)
+- Download [data](https://drive.google.com/file/d/16AnJaEJpsRUfh3Qct37vUvPs4iKCM5G9/view?usp=sharing) and save to `./data/`
 
 ## Wheels
 
