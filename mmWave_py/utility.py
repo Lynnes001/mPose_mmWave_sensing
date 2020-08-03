@@ -330,24 +330,6 @@ def featureExtraction(folder, optPath):
         
         heatmaps[i,:,:] = np.concatenate((range_azimuth, range_azimuth2, range_elevation), axis = 1)
         
-
-
-        # print("Maxs: ", range_azimuth.max(), " === ", range_azimuth2.max(), " === ", range_elevation.max(), " === ")
-        # print("Mins: ", range_azimuth.min(), " === ", range_azimuth2.min(), " === ", range_elevation.min(), " === ")
-        # if i == 100:
-        #     break
-        
-        # if 11< i <=21:
-        #     fig = plt.figure(figsize=(3,3),frameon=False)
-        #     plt.imshow(heatmaps[i,:,:])
-        #     plt.title('input heatmap')
-        #     plt.savefig('./intermediate/fig'+str(figid)+'_'+str(i))
-
-        #     plt.show()
-            
-        #     plt.close()
-        #     if i == 21:
-        #         break
                 
     # opt
     heatmaps=heatmaps.astype('float32')
