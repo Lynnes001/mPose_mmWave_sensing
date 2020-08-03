@@ -28,7 +28,7 @@ The project includes the following parts.
 ## Wheels
 
 - [Capture 3D Skeleton Points from Xbox Kinect.](https://github.com/Lynnes001/mPose_mmWave_sensing/blob/master/docs/capture_kinect.md)
-- [Extract Spatial Heatmaps](https://github.com/Lynnes001/mPose_mmWave_sensing/blob/master/docs/extractRangeAzimuthElevation.md)
+- [Extract Spatial Heatmaps (azimuth, elevation)](https://github.com/Lynnes001/mPose_mmWave_sensing/blob/master/docs/extractRangeAzimuthElevation.md)
 - [Syncing radar frames and 3D skeleton from Kinect]
 
 
