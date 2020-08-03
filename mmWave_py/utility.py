@@ -262,29 +262,24 @@ def featureExtraction(folder, optPath):
     reso = dsp.range_resolution(numADCSamples, dig_out_sample_rate=6000, freq_slope_const=39.010)
     reso = round(reso[0], 4)
     
-    # adc_data = np.fromfile(filename)
     adc_data = np.fromfile(filename, dtype=np.uint16)
 
     # (1) Load Data
     if adc_data.shape[0]<398458880:
-        padSize = 398458880 - adc_data.shape[0];
+        padSize = 398458880 - adc_data.shape[0]
         print("padded size: ", padSize)
         adc_data = np.pad(adc_data, padSize)[padSize:]
         
-    # print(adc_data.shape)
     adc_data = adc_data.reshape(numFrames, -1)
     adc_data = np.apply_along_axis(DCA1000.organize, 1, adc_data, num_chirps=numChirpsPerFrame,
                        num_rx=numRxAntennas, num_samples=numADCSamples)
     
-    # heatmaps = np.zeros((adc_data.shape[0], 3, ANGLE_BINS, BINS_PROCESSED), dtype = 'float32')
     heatmaps = np.zeros((adc_data.shape[0], ANGLE_BINS, ANGLE_BINS), dtype = 'float32')
     
     numVirAntHori = 3
     numVirAntVer = 4
     
     # (2) Start DSP processing
-    # num_vec_4va, steering_vec_4va = dsp.gen_steering_vec(40, ANGLE_RES, numVirAntVer)
-    # num_vec_3va, steering_vec_3va = dsp.gen_steering_vec(70, ANGLE_RES, numVirAntHori)
     num_vec_4va, steering_vec_4va = dsp.gen_steering_vec(ANGLE_RANGE, ANGLE_RES, numVirAntVer)
     num_vec_3va, steering_vec_3va = dsp.gen_steering_vec(ANGLE_RANGE, ANGLE_RES, numVirAntHori)
     
@@ -292,22 +287,15 @@ def featureExtraction(folder, optPath):
     for i, frame in enumerate(adc_data):
         timestamp+=0.033
         timestampList.append(timestamp)
-        # print(frame.shape)
-    
-        # range_azimuth = np.zeros(((70 * 2) // 1 + 1, BINS_PROCESSED))
-        # range_azimuth2 = np.zeros(((70 * 2) // 1 + 1, BINS_PROCESSED))
-        # range_elevation = np.zeros(((40 * 2) // 1 + 1, BINS_PROCESSED))
         range_azimuth = np.zeros((ANGLE_BINS, BINS_PROCESSED-10))
         range_azimuth2 = np.zeros((ANGLE_BINS, BINS_PROCESSED-10))
         range_elevation = np.zeros((ANGLE_BINS, BINS_PROCESSED-10))
     
         # Range Processing
         radar_cube = dsp.range_processing(frame, window_type_1d=Window.BLACKMAN)
-        # radar_cube = dsp.range_processing(frame)
     
         """ (Capon Beamformer) """
         # --- static clutter removal / normalize
-        # radar_cube = normalize(radar_cube.astype("float32"))
         mean = radar_cube.mean(0)
         radar_cube = radar_cube - mean
         
@@ -326,44 +314,15 @@ def featureExtraction(folder, optPath):
         # Range bin processed
         for j in range(10,BINS_PROCESSED):
             
-            # V1
-            # range_azimuth[:,j], beamWeights_azimuth[:,j] = dsp.aoa_capon( radar_cube[j, 1:4 ,:], steering_vec_3va, magnitude=True)
-            # range_azimuth2[:,j], beamWeights_azimuth2[:,j] = dsp.aoa_capon( radar_cube[j, 5:8 ,:], steering_vec_3va, magnitude=True)
-            # range_elevation[:,j], beamWeights_elevation[:,j] = dsp.aoa_capon(
-            #                                                 np.concatenate((radar_cube[:, 0::4 ,:], radar_cube[:, 1::4,:]), axis=1)[:,:, j].T, 
-            #                                                 steering_vec_4va, magnitude=True)
             range_azimuth[:, j-10], beamWeights_azimuth[:, j-10] = dsp.aoa_capon( radar_cube[:, 1:4 , j-10].T, steering_vec_3va, magnitude=True)
             range_azimuth2[:, j-10], beamWeights_azimuth2[:, j-10] = dsp.aoa_capon( radar_cube[:, 5:8 , j-10].T, steering_vec_3va, magnitude=True)
             range_elevation[:, j-10], beamWeights_elevation[:, j-10] = dsp.aoa_capon( radar_cube[:, [0,4,1,5] , j-10].T,  steering_vec_4va, magnitude=True)
-            
-            
-            # # V2
-            # range_azimuth[:,j], beamWeights_azimuth[:,j] = dsp.aoa_capon( radar_cube[:, 0:3 , j].T, steering_vec_3va, magnitude=True)
-            # range_azimuth2[:,j], beamWeights_azimuth2[:,j] = dsp.aoa_capon( radar_cube[:, 4:7 ,j].T, steering_vec_3va, magnitude=True)
-            # range_elevation[:,j], beamWeights_elevation[:,j] = dsp.aoa_capon( radar_cube[:, [2,6,3,7], j].T, steering_vec_4va, magnitude=True)
-            
-        
-        # print('AFTER \nmean: ', np.mean(range_azimuth), np.mean(range_azimuth2), np.mean(range_elevation) )
-        # print('std: ', np.std(range_azimuth), np.std(range_azimuth2), np.std(range_elevation) )
-        
-        # print(np.mean(np.mean(range_azimuth,axis = 1)), np.std(range_azimuth))
-        # minmax_scale(X, feature_range=(0, 1), axis=0, copy=True)
-        # range_azimuth = minmax_scale(range_azimuth, axis = 1, copy = False)
-        # range_azimuth2 = minmax_scale(range_azimuth2, axis = 1, copy = False)
-        # range_elevation = minmax_scale(range_elevation, axis = 1, copy = False)
         
         # normalize
-
         prescale_factor = 10000000
         range_azimuth = scale(range_azimuth/prescale_factor, axis = 1)
         range_azimuth2 = scale(range_azimuth2/prescale_factor, axis = 1) 
         range_elevation = scale(range_elevation/prescale_factor, axis = 1) 
-            
-        # if i == 22:
-        #     break
-        # plt.imshow(range_azimuth)
-        # plt.show()
-        # plt.pause(0.5)
         
         range_azimuth = resize(range_azimuth, (ANGLE_BINS, ANGLE_BINS/3))
         range_azimuth2 = resize(range_azimuth2, (ANGLE_BINS, ANGLE_BINS/3))

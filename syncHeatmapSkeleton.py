@@ -13,7 +13,6 @@ skipFrames = 6 # skip frist 6 frames when saving.
 
 
 
-
 skeletonFolders = glob.glob(envFolder+"data_raw//*")
 radarFeatureFolder = envFolder+"data_features//"
 writeFolder = envFolder+"data_train//"
