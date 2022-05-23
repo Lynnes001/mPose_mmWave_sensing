@@ -1,0 +1,12 @@
+name: Sync to Gitee on Push
+on: push
+jobs:
+  SyncToGiteeOnPush:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wearerequired/git-mirror-action@master
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+        with:
+          source-repo: "git@github.com:Lynnes001/mPose_mmWave_sensing.git"
+          destination-repo: "git@gitee.com:sidfornow/mPose_mmWave_sensing.git"
