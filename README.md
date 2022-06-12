@@ -33,8 +33,8 @@ This section demonstrates the 3D posture reconstruction results comparing with g
 
 ### 3D Posture Animation
 
-![animation:walk](walk.gif)
-![animation:wave](wave.gif)
+![animation:walk](walk_compressed.gif)
+![animation:wave](wave_compressed.gif)
 
 ### Statistical Results
 
