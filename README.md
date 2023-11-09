@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the implementation of mmWave radar human 3D posture skeletons sensing and some wheels. Much appreciate to TI, TI e2e forum, [PreSense Radar](https://github.com/PreSenseRadar/OpenRadar) team, [PyKinect2](https://github.com/Kinect/PyKinect2), and [Tensorflow Keras](https://github.com/keras-team/keras) along implementing this project. Please share if you think this repository is helpful.
+This is an implementation of mmWave radar human 3D posture skeletons sensing and some wheels. Much appreciate to TI, TI e2e forum, [PreSense Radar](https://github.com/PreSenseRadar/OpenRadar) team, [PyKinect2](https://github.com/Kinect/PyKinect2), and [Tensorflow Keras](https://github.com/keras-team/keras) along implementing this project. Please STAR if you think this repository is helpful.
 
 The repository has following parts.
 
@@ -14,22 +14,22 @@ The repository has following parts.
 
 ## Posture Sensing
 
-The ultimate goal is to reconstruct 3D fullbody human postures using wireless signals. We use directional RF mmWave signal as the signal source, and the camera as the control group. The wireless signal is transmitted from the antenna and bounce back with absorbtion after reaching a barrier. The received signal should imply spatial information that should be able to address with radar signal processing or nerual network. 
+The ultimate goal is to reconstruct 3D fullbody human postures using wireless signals. We use directional RF mmWave signal as the signal source, and the camera as the control group. The wireless signal is transmitted from the antenna and bounce back with absorbtion after reaching a barrier. The received signal should imply spatial information that should be able to address with radar signal processing or neural network. 
 <!-- See Figure below for a more intuitive understanding. -->
 
-Advantanges compared with other posture tracking solutions:
+Advantages compared with other posture tracking solutions:
 
-- **Privacy-protected.** No camera involved. Privacy informaiton will not be captured by any chance.
+- **Privacy-protected.** No camera involved. Privacy information will not be captured by any chance.
 - **Realtime.** Have the potential to achieve 60FPS realtime tracking.
 - **Easy to setup.** Compact radar antennae.
 <!-- - **Environment-independent.**  -->
 
-<!-- [A figure here to show how radar tansmit signal and bounce back after absorbtion.] -->
+<!-- [A figure here shows how radar transmits signals and bounces back after absorbtion.] -->
 
 
 ## A Demonstration of 3D Posture Reconstruction
 
-This section demonstrates the 3D posture reconstruction results comparing with ground truth captured with a depth camera. A model consisted with CNN, RNN, and FCN is trained to reconstruct 3D posture from processed mmWave signal features.
+This section demonstrates the 3D posture reconstruction results compared with ground truth captured with a depth camera. A model consisting of CNN, RNN, and FCN is trained to reconstruct 3D posture from processed mmWave signal features.
 
 ### 3D Posture Animation
 
@@ -69,3 +69,6 @@ This section demonstrates the 3D posture reconstruction results comparing with g
 - PyKinect2
 - Keras
 - PreSense Radar
+
+## =
+*Please STAR this project to make me feel that I helped you to beat "some" competitors* :)
