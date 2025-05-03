@@ -72,3 +72,5 @@ This section demonstrates the 3D posture reconstruction results compared with gr
 
 ## =
 *Please STAR this project to make me feel that I helped you to beat "some" competitors* :)
+
+I could no longer update/test this repo since i no longer own the devices.
